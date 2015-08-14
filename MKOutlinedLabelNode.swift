@@ -1,6 +1,5 @@
 //
 //  MKOutlinedLabelNode.swift
-//  Bubble Brainer
 //
 //  Created by Mario Klaver on 13-8-2015.
 //  Copyright (c) 2015 Endpoint ICT. All rights reserved.
