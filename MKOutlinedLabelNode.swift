@@ -12,6 +12,7 @@ class MKOutlinedLabelNode: SKLabelNode {
     
     var borderColor: UIColor = UIColor.black
     var borderWidth: CGFloat = 7.0
+    var borderOffset : CGPoint = CGPoint(x: 0, y: 0)
     
     var outlinedText: String! {
         didSet { drawText() }
@@ -91,7 +92,7 @@ class MKOutlinedLabelNode: SKLabelNode {
         let sizeText = self.calculateAccumulatedFrame()
         let sizeBorder = border.calculateAccumulatedFrame()
         let offsetX = (sizeBorder.width - sizeText.width) / 2
-        return CGPoint(x: -(sizeBorder.width / 2) + offsetX, y: 1)
+        return CGPoint(x: -(sizeBorder.width / 2) + offsetX + borderOffset.x, y: 1 + borderOffset.y)
         
     }
 }
