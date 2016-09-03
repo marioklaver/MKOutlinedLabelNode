@@ -10,7 +10,7 @@ import SpriteKit
 
 class MKOutlinedLabelNode: SKLabelNode {
     
-    var borderColor: UIColor = UIColor.blackColor()
+    var borderColor: UIColor = UIColor.black
     
     var outlinedText: String! {
         didSet { drawText() }
@@ -39,11 +39,11 @@ class MKOutlinedLabelNode: SKLabelNode {
             self.text = text
             if let path = createBorderPathForText() {
                 let border = SKShapeNode()
-
+                
                 border.strokeColor = borderColor
                 border.lineWidth = 7;
                 border.path = path
-                border.position = positionBorder(border)
+                border.position = positionBorder(border: border)
                 addChild(border)
                 
                 self.border = border
@@ -54,29 +54,29 @@ class MKOutlinedLabelNode: SKLabelNode {
     private func getTextAsCharArray() -> [UniChar] {
         var chars = [UniChar]()
         
-        for codeUnit in text.utf16 {
+        for codeUnit in (text?.utf16)! {
             chars.append(codeUnit)
         }
         return chars
     }
     
-    private func createBorderPathForText() -> CGPathRef? {
+    private func createBorderPathForText() -> CGPath? {
         let chars = getTextAsCharArray()
-        let borderFont = CTFontCreateWithName(self.fontName, self.fontSize, nil)
+        let borderFont = CTFontCreateWithName(self.fontName as CFString?, self.fontSize, nil)
         
-        var glyphs = Array<CGGlyph>(count: chars.count, repeatedValue: 0)
+        var glyphs = Array<CGGlyph>(repeating: 0, count: chars.count)
         let gotGlyphs = CTFontGetGlyphsForCharacters(borderFont, chars, &glyphs, chars.count)
         
         if gotGlyphs {
-            var advances = Array<CGSize>(count: chars.count, repeatedValue: CGSize())
-            CTFontGetAdvancesForGlyphs(borderFont, CTFontOrientation.OrientationHorizontal, glyphs, &advances, chars.count);
+            var advances = Array<CGSize>(repeating: CGSize(), count: chars.count)
+            CTFontGetAdvancesForGlyphs(borderFont, CTFontOrientation.horizontal, glyphs, &advances, chars.count);
             
-            let letters = CGPathCreateMutable()
+            let letters = CGMutablePath()
             var xPosition = 0 as CGFloat
             for index in 0...(chars.count - 1) {
                 let letter = CTFontCreatePathForGlyph(borderFont, glyphs[index], nil)
-                var t = CGAffineTransformMakeTranslation(xPosition , 0)
-                CGPathAddPath(letters, &t, letter)
+                let t = CGAffineTransform(translationX: xPosition , y: 0)
+                letters.addPath(letter!, transform: t)
                 xPosition = xPosition + advances[index].width
             }
             
@@ -90,7 +90,7 @@ class MKOutlinedLabelNode: SKLabelNode {
         let sizeText = self.calculateAccumulatedFrame()
         let sizeBorder = border.calculateAccumulatedFrame()
         let offsetX = (sizeBorder.width - sizeText.width) / 2
+        return CGPoint(x: -(sizeBorder.width / 2) + offsetX, y: 1)
         
-        return CGPointMake(-(sizeBorder.width / 2) + offsetX, 1)
     }
 }
