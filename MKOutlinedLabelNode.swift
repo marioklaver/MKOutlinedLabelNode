@@ -11,6 +11,7 @@ import SpriteKit
 class MKOutlinedLabelNode: SKLabelNode {
     
     var borderColor: UIColor = UIColor.black
+    var borderWidth: CGFloat = 7.0
     
     var outlinedText: String! {
         didSet { drawText() }
@@ -41,7 +42,7 @@ class MKOutlinedLabelNode: SKLabelNode {
                 let border = SKShapeNode()
                 
                 border.strokeColor = borderColor
-                border.lineWidth = 7;
+                border.lineWidth = borderWidth;
                 border.path = path
                 border.position = positionBorder(border: border)
                 addChild(border)
