@@ -17,7 +17,7 @@ class MKOutlinedLabelNode: SKLabelNode {
         case over
         case under
     }
-    var borderStyle = borderStyleType.over
+    var borderStyle = borderStyleType.under
     
     var outlinedText: String! {
         didSet { drawText() }
