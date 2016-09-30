@@ -91,8 +91,15 @@ class MKOutlinedLabelNode: SKLabelNode {
     private func positionBorder(border: SKShapeNode) -> CGPoint {
         let sizeText = self.calculateAccumulatedFrame()
         let sizeBorder = border.calculateAccumulatedFrame()
-        let offsetX = (sizeBorder.width - sizeText.width) / 2
-        return CGPoint(x: -(sizeBorder.width / 2) + offsetX + borderOffset.x, y: 1 + borderOffset.y)
+        let offsetX = sizeBorder.width - sizeText.width
         
+        switch self.horizontalAlignmentMode {
+        case SKLabelHorizontalAlignmentMode.center:
+            return CGPoint(x: -(sizeBorder.width / 2) + offsetX/2.0 + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        case SKLabelHorizontalAlignmentMode.left:
+            return CGPoint(x: sizeBorder.origin.x - self.borderWidth*2 + offsetX + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        default:
+            return CGPoint(x: sizeBorder.origin.x - sizeText.width - self.borderWidth*2 + offsetX + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        }
     }
 }
