@@ -13,6 +13,11 @@ class MKOutlinedLabelNode: SKLabelNode {
     var borderColor: UIColor = UIColor.black
     var borderWidth: CGFloat = 7.0
     var borderOffset : CGPoint = CGPoint(x: 0, y: 0)
+    enum borderStyleType {
+        case over
+        case under
+    }
+    var borderStyle = borderStyleType.over
     
     var outlinedText: String! {
         didSet { drawText() }
@@ -22,9 +27,7 @@ class MKOutlinedLabelNode: SKLabelNode {
     
     required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
     
-    override init() {
-        super.init()
-    }
+    override init() { super.init() }
     
     init(fontNamed fontName: String!, fontSize: CGFloat) {
         super.init(fontNamed: fontName)
@@ -46,6 +49,14 @@ class MKOutlinedLabelNode: SKLabelNode {
                 border.lineWidth = borderWidth;
                 border.path = path
                 border.position = positionBorder(border: border)
+                switch self.borderStyle {
+                    case borderStyleType.over:
+                        border.zPosition = self.zPosition + 1
+                        break
+                    default:
+                        border.zPosition = self.zPosition - 1
+                }
+                
                 addChild(border)
                 
                 self.border = border
