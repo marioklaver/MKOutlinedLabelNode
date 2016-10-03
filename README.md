@@ -1,12 +1,11 @@
 # MKOutlinedLabelNode
-Draw outlined text in SpriteKit. Currently only SKLabelHorizontalAlignmentMode.Center is supported. But it shouldn't be too hard to support all alignment modes. We just have to position the border depending on the alignment mode.
+Draw outlined text in SpriteKit.
 
 Usage
 -----
 ```swift
 let textNode = MKOutlinedLabelNode(fontNamed: "Helvetica", fontSize: 32)
 textNode.borderColor = UIColor.blackColor()
-textNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
 textNode.fontColor = UIColor.blueColor()
 textNode.outlinedText = "Test"
 ```
