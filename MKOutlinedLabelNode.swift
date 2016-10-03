@@ -13,6 +13,11 @@ class MKOutlinedLabelNode: SKLabelNode {
     var borderColor: UIColor = UIColor.black
     var borderWidth: CGFloat = 7.0
     var borderOffset : CGPoint = CGPoint(x: 0, y: 0)
+    enum borderStyleType {
+        case over
+        case under
+    }
+    var borderStyle = borderStyleType.under
     
     var outlinedText: String! {
         didSet { drawText() }
@@ -22,9 +27,7 @@ class MKOutlinedLabelNode: SKLabelNode {
     
     required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
     
-    override init() {
-        super.init()
-    }
+    override init() { super.init() }
     
     init(fontNamed fontName: String!, fontSize: CGFloat) {
         super.init(fontNamed: fontName)
@@ -46,6 +49,14 @@ class MKOutlinedLabelNode: SKLabelNode {
                 border.lineWidth = borderWidth;
                 border.path = path
                 border.position = positionBorder(border: border)
+                switch self.borderStyle {
+                    case borderStyleType.over:
+                        border.zPosition = self.zPosition + 1
+                        break
+                    default:
+                        border.zPosition = self.zPosition - 1
+                }
+                
                 addChild(border)
                 
                 self.border = border
@@ -91,8 +102,15 @@ class MKOutlinedLabelNode: SKLabelNode {
     private func positionBorder(border: SKShapeNode) -> CGPoint {
         let sizeText = self.calculateAccumulatedFrame()
         let sizeBorder = border.calculateAccumulatedFrame()
-        let offsetX = (sizeBorder.width - sizeText.width) / 2
-        return CGPoint(x: -(sizeBorder.width / 2) + offsetX + borderOffset.x, y: 1 + borderOffset.y)
+        let offsetX = sizeBorder.width - sizeText.width
         
+        switch self.horizontalAlignmentMode {
+        case SKLabelHorizontalAlignmentMode.center:
+            return CGPoint(x: -(sizeBorder.width / 2) + offsetX/2.0 + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        case SKLabelHorizontalAlignmentMode.left:
+            return CGPoint(x: sizeBorder.origin.x - self.borderWidth*2 + offsetX + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        default:
+            return CGPoint(x: sizeBorder.origin.x - sizeText.width - self.borderWidth*2 + offsetX + self.borderOffset.x, y: 1 + self.borderOffset.y)
+        }
     }
 }
