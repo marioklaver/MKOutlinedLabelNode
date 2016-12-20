@@ -19,11 +19,17 @@ class MKOutlinedLabelNode: SKLabelNode {
     }
     var borderStyle = borderStyleType.under
     
+    var shadowEnabled = false
+    var shadowColor: UIColor = UIColor.black
+    var shadowOffset: CGPoint = CGPoint(x: 4, y: 4)
+    var shadowAlpha: CGFloat = 0.5
+    
     var outlinedText: String! {
         didSet { drawText() }
     }
     
     private var border: SKShapeNode?
+    private(set) var shadow: SKShapeNode?
     
     required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
     
@@ -48,18 +54,29 @@ class MKOutlinedLabelNode: SKLabelNode {
                 border.strokeColor = borderColor
                 border.lineWidth = borderWidth;
                 border.path = path
-                border.position = positionBorder(border: border)
+                border.position = positionShape(shapeNode: border)
                 switch self.borderStyle {
-                    case borderStyleType.over:
-                        border.zPosition = self.zPosition + 1
-                        break
-                    default:
-                        border.zPosition = self.zPosition - 1
+                case borderStyleType.over:
+                    border.zPosition = self.zPosition + 1
+                    break
+                default:
+                    border.zPosition = self.zPosition - 1
                 }
                 
-                addChild(border)
-                
+                self.addChild(border)
                 self.border = border
+                
+                
+                let shadow = SKShapeNode()
+                shadow.fillColor = self.shadowColor
+                shadow.path = path
+                var shadowPosition = positionShape(shapeNode: shadow)
+                shadowPosition = CGPoint(x: shadowPosition.x + self.shadowOffset.x, y: shadowPosition.y + self.shadowOffset.y)
+                shadow.position = shadowPosition
+                shadow.alpha = self.shadowAlpha
+                
+                self.addChild(shadow)
+                self.shadow = shadow
             }
         }
     }
@@ -89,7 +106,10 @@ class MKOutlinedLabelNode: SKLabelNode {
             for index in 0...(chars.count - 1) {
                 let letter = CTFontCreatePathForGlyph(borderFont, glyphs[index], nil)
                 let t = CGAffineTransform(translationX: xPosition , y: 0)
-                letters.addPath(letter!, transform: t)
+                
+                if let l = letter {
+                    letters.addPath(l, transform: t)
+                }
                 xPosition = xPosition + advances[index].width
             }
             
@@ -99,9 +119,9 @@ class MKOutlinedLabelNode: SKLabelNode {
         }
     }
     
-    private func positionBorder(border: SKShapeNode) -> CGPoint {
+    private func positionShape(shapeNode: SKShapeNode) -> CGPoint {
         let sizeText = self.calculateAccumulatedFrame()
-        let sizeBorder = border.calculateAccumulatedFrame()
+        let sizeBorder = shapeNode.calculateAccumulatedFrame()
         let offsetX = sizeBorder.width - sizeText.width
         
         switch self.horizontalAlignmentMode {
